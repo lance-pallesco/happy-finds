@@ -2,43 +2,55 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Action;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\Layout\Grid;
+use Filament\Schemas\Components\Flex;
+use Filament\Support\Enums\Alignment;
+use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\HtmlString;
 
 class ProductsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-        ->contentGrid([
-                'sm' => 2,
-                'md' => 3, // 3 cards per row on medium screens
-                'xl' => 4, // 4 cards on large screens
-            ])
             ->columns([
-                ViewColumn::make('card')
-                    ->view('filament.infolists.components.product-card'),
+                Stack::make([
+                    ViewColumn::make('image')
+                        ->alignCenter()
+                        ->view('filament.infolists.components.product-card'),
+                ]),
+            ])  
+            ->paginated(false)
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 5,
             ])
-            ->recordActions([
-                ViewAction::make()
-                    ->label('View')
-                    ->button()
-                    ->outlined()
-                    ->color('gray')
-                    ->extraAttributes(['class' => 'mt-3 text-sm w-full text-center']),
-                EditAction::make()
-                    ->label('Edit')
-                    ->button()
+            ->toolbarActions([
+                Action::make('copyCatalogLink')
+                    ->label('Copy Page Link')
+                    ->icon('heroicon-o-link')
                     ->color('primary')
-                    ->extraAttributes(['class' => 'mt-2 text-sm w-full text-center']),
+                    ->extraAttributes([
+                        'x-data' => '{}',
+                        'x-on:click' => "
+                            const currentUrl = window.location.href;
+                            navigator.clipboard.writeText(currentUrl);
+                            \$toast.open({ message: 'Link copied to clipboard!', type: 'success' });
+                        ",
+                    ]),
+                    Action::make('showQr')
+                        ->label('Show Catalog QR')
+                        ->icon('heroicon-o-qr-code')
+                        ->color('success')
+                        ->modalHeading('Public Catalog QR Code')
+                        ->modalContent(fn () => view('filament.components.catalog-qr-modal', [
+                            'link' => url('/catalog'),
+                        ])),
             ]);
     }
 }

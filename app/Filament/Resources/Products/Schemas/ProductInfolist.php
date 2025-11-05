@@ -8,6 +8,7 @@ use Filament\Infolists\Components\ViewEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Tapp\FilamentSocialShare\Actions\SocialShareAction;
 
 class ProductInfolist
 {
@@ -33,9 +34,9 @@ class ProductInfolist
 
                             TextEntry::make('price')
                                 ->label('Price')
-                                ->money('PHP', true)
-                                ->badge()
-                                ->color('success'),
+                                ->weight('medium')
+                                ->size('lg')
+                                ->money('PHP', true),
 
                             TextEntry::make('category')
                                 ->label('Category')
@@ -68,9 +69,16 @@ class ProductInfolist
                             ->alignJustify()
                             ->columnSpanFull()
                             ->placeholder('No description provided.'),
-                    ])
+                    ]),
+                    Section::make('Product Information')
+                    ->description('Essential details about this product.')
+                    ->schema([
+                        SocialShareAction::make()
+                            ->label('Share this product')
+                            ->facebook()
+                            ->email(),
+                    ]) 
                     ->columns(1)
-                    ->collapsible(),
             ]);
     }
 }
