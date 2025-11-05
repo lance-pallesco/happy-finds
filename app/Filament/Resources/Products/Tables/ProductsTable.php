@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Flex;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\Layout\Split;
@@ -30,27 +31,35 @@ class ProductsTable
                 'md' => 2,
                 'xl' => 5,
             ])
-            ->toolbarActions([
-                Action::make('copyCatalogLink')
-                    ->label('Copy Page Link')
-                    ->icon('heroicon-o-link')
-                    ->color('primary')
-                    ->extraAttributes([
-                        'x-data' => '{}',
-                        'x-on:click' => "
-                            const currentUrl = window.location.href;
-                            navigator.clipboard.writeText(currentUrl);
-                            \$toast.open({ message: 'Link copied to clipboard!', type: 'success' });
-                        ",
-                    ]),
-                    Action::make('showQr')
-                        ->label('Show Catalog QR')
-                        ->icon('heroicon-o-qr-code')
-                        ->color('success')
-                        ->modalHeading('Public Catalog QR Code')
-                        ->modalContent(fn () => view('filament.components.catalog-qr-modal', [
-                            'link' => url('/catalog'),
-                        ])),
+                ->headerActions([
+                    Action::make('copyCatalogLink')
+                        ->label('Copy Link')
+                        ->icon('heroicon-o-link')
+                        ->color('info')
+                        ->action(function () {
+                            // You can optionally log or do something here
+                            Notification::make()
+                            ->title('Link copied!')
+                            ->success()
+                            ->send();
+                        })
+                        ->extraAttributes([
+                            'x-on:click.prevent' => "
+                                navigator.clipboard.writeText(window.location.href).then(() => {
+                                    \$wire.mountAction('copyCatalogLink')
+                                })
+                            ",
+                        ]),
+                Action::make('showQr')
+                    ->label('Show QR')
+                    ->icon('heroicon-o-qr-code')
+                    ->color('success')
+                    ->modalHeading('Public Catalog QR Code')
+                    ->modalContent(fn () => view('filament.components.catalog-qr-modal', [
+                        'link' => url('/admin/products'),
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelAction(false)
             ]);
     }
 }

@@ -17,6 +17,13 @@
         : asset('images/placeholder.png');
     
     $isDark = filament()->hasDarkMode() && filament()->getTheme() === 'dark';
+
+    $colorClasses = match ($record->status) {
+        'available' => 'bg-green-600 ',
+        'out_of_stock' => 'bg-red-600 ',
+        'inactive' => 'bg-yellow-500',
+        'archived' => 'bg-gray-500',
+    };
 @endphp
 
 <div class="relative max-w-md pt-0 group transition-all duration-300 hover:shadow-lg rounded-xl">
@@ -37,6 +44,11 @@
     <p class="mt-1 mb-2 text-xs font-medium uppercase text-gray-500">
       {{ $record->category ?? '' }}
     </p>
+    <div class="m-2">
+      <div class="items-center inline-block px-2 text-base font-semibold {{$colorClasses}} text-green-800 shadow-sm">
+        <span class="uppercase text-xs font-bold text-white dark:text-green-200">{{ $record->status }} </span>
+      </div>
+    </div>
     <p class="mt-1 text-gray-500 text-justify dark:text-neutral-400">
       {{ \Illuminate\Support\Str::limit(strip_tags($record->description), 100, '...') }}
     </p>
