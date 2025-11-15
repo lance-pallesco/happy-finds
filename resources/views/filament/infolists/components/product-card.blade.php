@@ -39,10 +39,10 @@
   <!-- Card body -->
   <div class="p-4 md:p-5 dark:bg-gray-900 rounded-b-xl">
     <h3 class="text-lg font-bold ">
-      {{ $record->name }}
+      {{ \Illuminate\Support\Str::ucfirst($record->name) }}
     </h3>
     <p class="mt-1 mb-2 text-xs font-medium uppercase text-gray-500">
-      {{ $record->category ?? '' }}
+      {{ \Illuminate\Support\Str::ucfirst($record->category) ?? '' }}
     </p>
     <div class="m-2">
       <div class="items-center inline-block px-2 text-base font-semibold {{$colorClasses}} text-green-800 shadow-sm">
@@ -50,7 +50,7 @@
       </div>
     </div>
     <p class="mt-1 text-gray-500 text-justify dark:text-neutral-400">
-      {{ \Illuminate\Support\Str::limit(strip_tags($record->description), 100, '...') }}
+      {{ \Illuminate\Support\Str::ucfirst(\Illuminate\Support\Str::limit(strip_tags($record->description), 100, '...')) }}
     </p>
     <div class="mt-6">
       <div class="items-center gap-2 text-base font-semibold px-3 py-1 text-green-800 shadow-sm dark:bg-green-800 dark:text-green-100">

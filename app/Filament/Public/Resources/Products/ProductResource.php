@@ -1,39 +1,26 @@
 <?php
 
-namespace App\Filament\Resources\Products;
+namespace App\Filament\Public\Resources\Products;
 
-use App\Filament\Resources\Products\Pages\CreateProduct;
-use App\Filament\Resources\Products\Pages\EditProduct;
-use App\Filament\Resources\Products\Pages\ListProducts;
-use App\Filament\Resources\Products\Pages\ViewProduct;
-use App\Filament\Resources\Products\Schemas\ProductForm;
-use App\Filament\Resources\Products\Schemas\ProductInfolist;
-use App\Filament\Resources\Products\Tables\ProductsTable;
+use App\Filament\Public\Resources\Products\Pages\ListProducts;
+use App\Filament\Public\Resources\Products\Pages\ViewProduct;   
+use App\Filament\Public\Resources\Products\Schemas\ProductInfolist;
+use App\Filament\Public\Resources\Products\Tables\ProductsTable;
 use App\Models\Product;
 use BackedEnum;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $recordTitleAttribute = 'name';
-
-    public static function getNavigationIcon(): string
-    {
-        return 'heroicon-o-shopping-bag';
-    }
-
-    public static function form(Schema $schema): Schema
-    {
-        return ProductForm::configure($schema);
-    }
 
     public static function infolist(Schema $schema): Schema
     {
@@ -56,14 +43,14 @@ class ProductResource extends Resource
     {
         return [
             'index' => ListProducts::route('/'),
-            'create' => CreateProduct::route('/create'),
             'view' => ViewProduct::route('/{record}'),
-            'edit' => EditProduct::route('/{record}/edit'),
         ];
     }
 
-    protected function getTableQuery(): Builder
+     public static function getEloquentQuery(): Builder
     {
-        return Product::query()->with(['images', 'primaryImage']);
+        // Show only available/active products publicly
+        return Product::query()
+            ->whereIn('status', ['available' , 'out_of_stock']);
     }
 }

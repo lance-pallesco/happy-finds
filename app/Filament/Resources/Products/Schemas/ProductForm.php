@@ -68,6 +68,7 @@ class ProductForm
                         ->label('Upload Images')
                         ->multiple()
                         ->reorderable()
+                        ->required()
                         ->image()
                         ->imageEditor()
                         ->panelLayout('grid') 

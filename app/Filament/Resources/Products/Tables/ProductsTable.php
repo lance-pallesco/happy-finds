@@ -45,7 +45,9 @@ class ProductsTable
                         })
                         ->extraAttributes([
                             'x-on:click.prevent' => "
-                                navigator.clipboard.writeText(window.location.href).then(() => {
+                                const currentUrl = window.location.href;
+                                const publicUrl = currentUrl.replace('/admin', '');
+                                navigator.clipboard.writeText(publicUrl).then(() => {
                                     \$wire.mountAction('copyCatalogLink')
                                 })
                             ",
@@ -55,8 +57,8 @@ class ProductsTable
                     ->icon('heroicon-o-qr-code')
                     ->color('success')
                     ->modalHeading('Public Catalog QR Code')
-                    ->modalContent(fn () => view('filament.components.catalog-qr-modal', [
-                        'link' => url('/admin/products'),
+                    ->modalContent(fn () => view('filament.compeonents.catalog-qr-modal', [
+                        'link' => url('/products'),
                     ]))
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false)
